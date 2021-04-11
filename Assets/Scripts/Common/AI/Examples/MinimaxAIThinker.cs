@@ -247,10 +247,11 @@ namespace ColorShapeLinks.Common.AI.Examples
                 {
                     // Get piece in current board position
                     Piece? piece = board[i, j];
-
+                    
                     // Is there any piece there?
                     if (piece.HasValue)
                     {
+                        
                         // If the piece is of our color, increment the
                         // heuristic inversely to the distance from the center
                         if (piece.Value.color == color)
