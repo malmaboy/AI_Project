@@ -362,7 +362,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 1
-  selectedThinker: ColorShapeLinks.Common.AI.Examples.SequentialAIThinker
+  selectedThinker: TrouxaBot
   thinkerParams: 
 --- !u!114 &617695837
 MonoBehaviour:
@@ -392,8 +392,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 1
-  selectedThinker: TrouxaBot
-  thinkerParams: 123
+  selectedThinker: ColorShapeLinks.Common.AI.Examples.SequentialAIThinker
+  thinkerParams: 
 --- !u!114 &617695839
 MonoBehaviour:
   m_ObjectHideFlags: 0

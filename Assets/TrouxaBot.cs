@@ -57,7 +57,7 @@ public class TrouxaBot : AbstractThinker
                     // Return this move immeditely
                     return new FutureMove(collums, shape);
                 // If our opponent is the winner
-                else if (winner.ToPColor() != AiColor.Other())
+               else if (winner.ToPColor() != AiColor.Other())
                     // Add this move to non-losing move list
                     nonLosingMoves.Add(new FutureMove(collums, shape));
                 
@@ -77,8 +77,9 @@ public class TrouxaBot : AbstractThinker
     }*/
     // Maximum Negamax search depth
     private int maxDepth;
+    
     // Default maximum search depth
-    private const int defaultMaxDepth = 5;
+    private const int DEFAULT_MAXIMUM_DEPTH = 3;
     
     /// <summary>
     /// Setup this AI 
@@ -87,28 +88,24 @@ public class TrouxaBot : AbstractThinker
     public override void Setup(string str)
     {
         if (!int.TryParse(str, out maxDepth))
-        {
-            maxDepth = defaultMaxDepth;
-        }
-
+            maxDepth = DEFAULT_MAXIMUM_DEPTH;
+        
         if (maxDepth < 1)
-            maxDepth = defaultMaxDepth;
+           maxDepth = DEFAULT_MAXIMUM_DEPTH;
     }
 
-    
+
     /// Returns the name of this AI which will include the maximum search depth
-    public override string ToString()
-    {
-        return base.ToString() + "D" + maxDepth;
-    }
+    public override string ToString() => base.ToString() + "_V1";
 
     public override FutureMove Think(Board board, CancellationToken ct)
     {
+        DateTime startTime = DateTime.Now;
+        
         // Invoke Negamax, starting with zero depth
         (FutureMove move, float score) decision = Negamax(board, ct,
             board.Turn, board.Turn, 0, float.NegativeInfinity,
             float.PositiveInfinity);
-        
         // Return best move
         return decision.move;
     }
@@ -129,7 +126,7 @@ public class TrouxaBot : AbstractThinker
             selectedMove = (FutureMove.NoMove, float.NaN);
     
         // Otherwise
-        else if ((winner = board.CheckWinner()) !=  Winner.None)
+        if ((winner = board.CheckWinner()) !=  Winner.None)
         {
             if (winner.ToPColor() == player)
                 // AI player wins, return hightest possible score
@@ -144,23 +141,23 @@ public class TrouxaBot : AbstractThinker
         }
         // Apply Heuristic HERE!!!!!!
         else if (depth == maxDepth)
-            selectedMove = (FutureMove.NoMove,GetBoardScore(board, player));
+            selectedMove = (FutureMove.NoMove, GetBoardScore(board, player));
         else
         {
-            selectedMove = turn == player
-                ? (FutureMove.NoMove, float.NegativeInfinity)
-                : (FutureMove.NoMove, float.PositiveInfinity);
+            selectedMove = (FutureMove.NoMove, float.NegativeInfinity);
+                
             
             
             // Test each column
             for (int i = 0; i < Cols; i++)
             {
                 if (board.IsColumnFull(i)) continue;
-                
+
                 for (int j = 0; j < 2; j++)
                 {
                     // Get current shape
                     PShape shape = (PShape)j;
+                   
 
                     // Use this variable to keep the current board's score
                     float eval;
@@ -171,33 +168,26 @@ public class TrouxaBot : AbstractThinker
                     // Test move, call Negamax and undo move
                     board.DoMove(shape, i);
                     eval = -Negamax(
-                        board, ct, player, turn.Other(), depth + 1, 
-                        -float.NegativeInfinity, 
-                        -float.PositiveInfinity).score;
+                        board, ct, player.Other(), turn.Other(), depth + 1, 
+                        float.NegativeInfinity, 
+                        float.PositiveInfinity).score;
                     board.UndoMove();
                     
 
-                    // If we're maximizing, is this the best move so far?
+                    //Alpha beta cut
+                    
                     if (eval > selectedMove.score)
-                    {
-                        // If so, keep it
+                        // If Keep it
                         selectedMove = (new FutureMove(i, shape), eval);
-                        Debug.Log("Hello_1");
-                    }
-                    // Otherwise, if we're minimizing, is this the worst
+                    
                     // move so far?
                     if (eval > alpha)
-                    {
                         // If so, keep it
                         alpha = eval;
-                        Debug.Log("Hello_2");
-                       
-                    }
-                    if (alpha >= beta)
-                    {
+                    
+                    if (beta < alpha)
                         return selectedMove;
-                        Debug.Log("Hello_3");
-                    }
+
                 }
             }
         }
@@ -207,7 +197,7 @@ public class TrouxaBot : AbstractThinker
     /// Apply an Heuristic for winning
     public static float GetBoardScore(Board board, PColor turn)
     {
-        return GetBoardScoreFor(board, turn) - GetBoardScore(board,
+        return GetBoardScoreFor(board, turn) - GetBoardScoreFor(board,
           turn.Other());
     }
     
@@ -215,15 +205,19 @@ public class TrouxaBot : AbstractThinker
     {
         // Current heuristic value
         float score = 0;
+        // To see if line is available
         bool lineAvailable = true;
         
+        // Here ?
         for (int i = 0; i < board.rows; i++)
         {
             
             for (int j = 0; j < board.cols; j++)
             {
+                // Get piece in current board position 
                 Piece? piece = board[i, j];
-
+                
+                // Verify if there any piece
                 if (piece.HasValue)
                 {
                     lineAvailable = false;
@@ -233,7 +227,8 @@ public class TrouxaBot : AbstractThinker
             if (lineAvailable) 
                 score++;
         }
-
+        
+        // Return the final heuristic score
         return score;
     }
 }
