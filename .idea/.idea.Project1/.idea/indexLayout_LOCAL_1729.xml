@@ -22,10 +22,6 @@
       <Path>.idea</Path>
       <Path>Library</Path>
       <Path>Logs</Path>
-<<<<<<< HEAD
-=======
-      <Path>Temp</Path>
->>>>>>> 8661f02c858dc0a7a2d9fcf98ade118fef0277a3
       <Path>UserSettings</Path>
       <Path>obj</Path>
     </explicitExcludes>
