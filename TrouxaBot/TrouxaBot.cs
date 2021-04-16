@@ -11,6 +11,8 @@ namespace TrouxaBot
     {
         // Current board state
         private Winner winner;
+        // Current shape state
+        private PShape shape;
         
         // Maximum Negamax search depth
         private int maxDepth;
@@ -76,7 +78,7 @@ namespace TrouxaBot
             }
             // Apply Heuristic HERE!!!!!!
             else if (depth == maxDepth)
-                selectedMove = (FutureMove.NoMove, Heuristics(board, player));
+                selectedMove = (FutureMove.NoMove, Heuristics(board, player, shape));
             else
             {
                 selectedMove = (FutureMove.NoMove, float.NegativeInfinity);
@@ -128,47 +130,29 @@ namespace TrouxaBot
         }
 
         /// Apply an Heuristic for winning
-        private  float Heuristics(Board board, PColor turn)
+        private static float Heuristics(Board board, PColor color , PShape shape)
         {
             
-            // Play in the middle > GetBoardScoreFor
-            if (NeverPlayUnderWinningMove(board) >
-                GetBoardScoreFor(board, turn) - GetBoardScoreFor(board,
-                    turn.Other()))
-            {
-                // Return PlayInTheMiddle
-                return NeverPlayUnderWinningMove(board);
-            }
-            // GetBoardScoreFor > PlayInTheMiddle
-            if(GetBoardScoreFor(board, turn) - GetBoardScoreFor(board,
-                turn.Other()) > NeverPlayUnderWinningMove(board))
+            /*
+            // GetBoardScoreFor 
+            if(GetBoardScoreFor(board, color) - GetBoardScoreFor(board,
+                color.Other()) > AndresHeuristic(board, shape, color))
             {
                 // return GetBoardScoreFor
-                return GetBoardScoreFor(board, turn) - GetBoardScoreFor(board,
-                    turn.Other());
+                return GetBoardScoreFor(board, color) - GetBoardScoreFor(board,
+                    color.Other());
             }
             
-            // GetBoardScoreFor > NeverPlayUnderWinningMove
-            if(GetBoardScoreFor(board, turn) - GetBoardScoreFor(board,
-                turn.Other()) > NeverPlayUnderWinningMove(board))
+            if (AndresHeuristic(board, shape,color) > GetBoardScoreFor(board, color) - GetBoardScoreFor(board,
+                    color.Other()))
             {
-                // Return GetBoardScoreFor
-                return GetBoardScoreFor(board, turn) - GetBoardScoreFor(board,
-                    turn.Other());
-            }
-            // NeverPlayUnderWinningMove > GetBoardScoreFor
-            if (NeverPlayUnderWinningMove(board) >
-                 GetBoardScoreFor(board, turn) - GetBoardScoreFor(board,
-                     turn.Other()))
-            {
-                // Return NeverPlayUnderWinningMove
-                return NeverPlayUnderWinningMove(board);
-            }
-            
-            return 0;
+                return AndresHeuristic(board, shape, color);
+            }*/
+
+            return AndresHeuristic(board, shape, color);
         }
 
-        private  float GetBoardScoreFor(Board board, PColor turn)
+        private static float GetBoardScoreFor(Board board, PColor turn)
         {
             // Current heuristic value
             float score = 0;
@@ -205,7 +189,7 @@ namespace TrouxaBot
         /// </summary>
         /// <param name="board"></param>
         /// <returns>score</returns>
-        private float NeverPlayUnderWinningMove(Board board)
+        private static float NeverPlayUnderWinningMove(Board board)
         {
             // Heuristic score
             float score = 0;
@@ -250,6 +234,86 @@ namespace TrouxaBot
 
             return score;
         }
-        
+
+        private static float AndresHeuristic(Board board, PShape turn, PColor color)
+        {
+            // Heuristic score
+            float score = 0;
+            
+            // Distancee between two points
+            float Distance(float x, float y, float x1, float y1)
+            {
+                return (float)Math.Sqrt(
+                    Math.Pow(x - x1, 2) + Math.Pow(y - y1, 2));
+            }
+            
+            // Determine the center row
+            float centerRow = board.rows / 2;
+            float centerCol = board.cols / 2;
+            
+            // Points added
+            float points = Distance(centerRow, centerCol, 0, 0);
+
+            for (int i = 0; i < board.rows; i++)
+            {
+                if (board.IsColumnFull(i)) continue;
+                
+                for (int j = 0; j < board.cols; j++)
+                {
+                    
+                    // Play in the middle
+                    // Get piece in current board position
+                   Piece? enemyPiece = board[i, j];
+                    
+                    // Verify is there any opponent piece
+                    if (enemyPiece.HasValue)
+                    {
+                        // If our color is white
+                        if (color == PColor.White)
+                        {
+                            // if there is
+                            // if the piece shape is != of ours 
+                            if (enemyPiece.Value.shape != turn)
+                            {
+                                // New sequence 
+                                score -= points -
+                                         Distance(centerRow, centerCol, i, j);
+                            }
+                            // if there is
+                            // if the piece shape == of our
+                            if (enemyPiece.Value.shape == turn)
+                            {
+                                // if the p
+                                score += points -
+                                         Distance(centerRow, centerCol, i, j);
+                            }
+                        }
+                        
+                        // If our color is red 
+                        if (color == PColor.Red)
+                        {
+                            if (enemyPiece.Value.shape != color.Shape())
+                            {
+                                
+                                // New sequence 
+                                score -= points -
+                                         Distance(centerRow, centerCol, i, j);
+                            }
+                            // if there is
+                            // if the piece shape == of our
+                            if (enemyPiece.Value.shape == color.Shape())
+                            {
+                                // if the p
+                                score += points -
+                                         Distance(centerRow, centerCol, i, j);
+                            }
+                        }
+                    }
+                }
+                    
+            }
+
+            return score;
+        }
     }
 }
