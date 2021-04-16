@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Threading;
-using System.Collections.Generic;
 using ColorShapeLinks.Common;
 using ColorShapeLinks.Common.AI;
-using UnityEngine;
 
 namespace TrouxaBot
 {
@@ -31,7 +29,8 @@ namespace TrouxaBot
 
             if (maxDepth < 1)
                 maxDepth = DEFAULT_MAXIMUM_DEPTH;
-            
+
+            //losingMoves = new List<FutureMove>();
         }
 
 
