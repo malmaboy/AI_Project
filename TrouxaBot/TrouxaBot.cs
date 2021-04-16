@@ -13,7 +13,7 @@ namespace TrouxaBot
         private Winner winner;
         // Current shape state
         private PShape shape;
-        
+
         // Maximum Negamax search depth
         private int maxDepth;
 
@@ -31,8 +31,7 @@ namespace TrouxaBot
 
             if (maxDepth < 1)
                 maxDepth = DEFAULT_MAXIMUM_DEPTH;
-
-            //losingMoves = new List<FutureMove>();
+            
         }
 
 
@@ -78,7 +77,7 @@ namespace TrouxaBot
             }
             // Apply Heuristic HERE!!!!!!
             else if (depth == maxDepth)
-                selectedMove = (FutureMove.NoMove, Heuristics(board, player, shape));
+                selectedMove = (FutureMove.NoMove, AndresHeuristic(board, shape, player));
             else
             {
                 selectedMove = (FutureMove.NoMove, float.NegativeInfinity);
@@ -127,112 +126,6 @@ namespace TrouxaBot
             }
 
             return selectedMove;
-        }
-
-        /// Apply an Heuristic for winning
-        private static float Heuristics(Board board, PColor color , PShape shape)
-        {
-            
-            /*
-            // GetBoardScoreFor 
-            if(GetBoardScoreFor(board, color) - GetBoardScoreFor(board,
-                color.Other()) > AndresHeuristic(board, shape, color))
-            {
-                // return GetBoardScoreFor
-                return GetBoardScoreFor(board, color) - GetBoardScoreFor(board,
-                    color.Other());
-            }
-            
-            if (AndresHeuristic(board, shape,color) > GetBoardScoreFor(board, color) - GetBoardScoreFor(board,
-                    color.Other()))
-            {
-                return AndresHeuristic(board, shape, color);
-            }*/
-
-            return AndresHeuristic(board, shape, color);
-        }
-
-        private static float GetBoardScoreFor(Board board, PColor turn)
-        {
-            // Current heuristic value
-            float score = 0;
-            // To see if line is available
-            bool lineAvailable = true;
-
-            for (int i = 0; i < board.rows; i++)
-            {
-
-                for (int j = 0; j < board.cols; j++)
-                {
-                    // Get piece in current board position 
-                    Piece? piece = board[i, j];
-
-                    // Verify if there any piece
-                    if (piece.HasValue)
-                    {
-                        lineAvailable = false;
-                        break;
-                    }
-                }
-
-                if (lineAvailable)
-                    
-                    score++;
-            }
-
-            // Return the final heuristic score
-            return score;
-        }
-
-        /// <summary>
-        /// Never play under opponent winning condition
-        /// </summary>
-        /// <param name="board"></param>
-        /// <returns>score</returns>
-        private static float NeverPlayUnderWinningMove(Board board)
-        {
-            // Heuristic score
-            float score = 0;
-            // 
-            bool isWin    = false;
-            
-            for (int i = 0; i < board.rows; i++)
-            {
-                
-                if (board.IsColumnFull(i)) continue;
-
-                for (int j = 0; j < board.cols; j++)
-                {
-                    // Get current shape
-                    PShape shape = (PShape) j;
-                    
-                    // Verify if the position is valid
-                    if (j + 1 >= board.cols)
-                    {
-                        continue;
-                    }
-                    // Get Enemy board win position
-                    // +1 is above 
-                    Piece? enemyPiece = board[i, j + 1];
-                   
-                    // Verify if any piece in that position
-                    if (enemyPiece.HasValue)
-                    {
-                        // It is a win for the opponent
-                        isWin = true;
-                        // Less score
-                        score--;
-                        break;
-                    }
-                    // Need to be more precise
-                    if (isWin)
-                    { 
-                        score++;
-                    }
-                }
-            }
-
-            return score;
         }
 
         private static float AndresHeuristic(Board board, PShape turn, PColor color)
