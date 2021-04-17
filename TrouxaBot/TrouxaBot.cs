@@ -35,7 +35,7 @@ namespace TrouxaBot
 
 
         /// Returns the name of this AI which will include the maximum search depth
-        public override string ToString() => "G03_" + base.ToString() + "_V2";
+        public override string ToString() => "G03_" + base.ToString() + "_V3";
 
         public override FutureMove Think(Board board, CancellationToken ct)
         {
@@ -89,7 +89,7 @@ namespace TrouxaBot
                     for (int j = 0; j < 2; j++)
                     {
                         // Get current shape
-                        shape = (PShape) j;
+                        PShape shape = (PShape) j;
 
                         // Use this variable to keep the current board's score
                         float eval;
@@ -127,7 +127,7 @@ namespace TrouxaBot
             return selectedMove;
         }
 
-        private static float AndresHeuristic(Board board, PShape turn, PColor color)
+        private  float AndresHeuristic(Board board, PShape turn, PColor color)
         {
             // Heuristic score
             float score = 0;
@@ -140,17 +140,17 @@ namespace TrouxaBot
             }
             
             // Determine the center row
-            float centerRow = board.rows / 2;
-            float centerCol = board.cols / 2;
+            float centerRow = Rows/ 2;
+            float centerCol = Cols / 2;
             
             // Points added
             float points = Distance(centerRow, centerCol, 0, 0);
 
-            for (int i = 0; i < board.rows; i++)
+            for (int i = 0; i < Rows; i++)
             {
                 if (board.IsColumnFull(i)) continue;
                 
-                for (int j = 0; j < board.cols; j++)
+                for (int j = 0; j < Cols; j++)
                 {
                     
                     // Play in the middle
