@@ -89,7 +89,7 @@ namespace TrouxaBot
                     for (int j = 0; j < 2; j++)
                     {
                         // Get current shape
-                        PShape shape = (PShape) j;
+                        shape = (PShape) j;
 
                         // Use this variable to keep the current board's score
                         float eval;
