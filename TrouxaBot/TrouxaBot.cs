@@ -2,6 +2,7 @@
 using System.Threading;
 using ColorShapeLinks.Common;
 using ColorShapeLinks.Common.AI;
+using UnityEngine;
 
 namespace TrouxaBot
 {
@@ -129,33 +130,42 @@ namespace TrouxaBot
 
         private  float AndresHeuristic(Board board, PShape turn, PColor color)
         {
+            
             // Heuristic score
             float score = 0;
             
             // Distancee between two points
             float Distance(float x, float y, float x1, float y1)
             {
+                // Analisar a distancia da ultima peça que foi jogada
                 return (float)Math.Sqrt(
                     Math.Pow(x - x1, 2) + Math.Pow(y - y1, 2));
             }
             
             // Determine the center row
-            float centerRow = Rows/ 2;
-            float centerCol = Cols / 2;
+            float centerRow = board.rows/ 2;
+            float centerCol = board.cols/ 2;
             
             // Points added
             float points = Distance(centerRow, centerCol, 0, 0);
 
-            for (int i = 0; i < Rows; i++)
+            for (int i = 0; i < board.rows; i++)
             {
-                if (board.IsColumnFull(i)) continue;
+                // If rows full recursive
+                if (board.cols > board.rows) 
+                    if (board.IsColumnFull(i)) continue;
                 
-                for (int j = 0; j < Cols; j++)
+                for (int j = 0; j < board.cols; j++)
                 {
+                    // If collums full recursive
+                    if (board.rows > board.cols)
+                        if (board.IsColumnFull(j)) continue;
+                    
                     
                     // Play in the middle
                     // Get piece in current board position
-                   Piece? enemyPiece = board[i, j];
+                    Piece? enemyPiece = board[i, j];
+                    
                     
                     // Verify is there any opponent piece
                     if (enemyPiece.HasValue)
