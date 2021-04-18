@@ -362,7 +362,6 @@ MigrationBackup/
 Makefile.in
 *.userprefs
 *.usertasks
-*.png
 config.make
 config.status
 aclocal.m4
