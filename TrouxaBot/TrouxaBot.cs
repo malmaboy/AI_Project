@@ -17,7 +17,8 @@ namespace TrouxaBot
         private int maxDepth;
 
         // Default maximum search depth
-        private const int DEFAULT_MAXIMUM_DEPTH = 3;
+        private const int DEFAULT_MAXIMUM_DEPTH_HIGH = 3;
+        private const int DEFAULT_MAXIMUM_DEPTH_LOW= 2;
 
         /// <summary>
         /// Setup this AI 
@@ -25,13 +26,23 @@ namespace TrouxaBot
         /// <param name="str"></param>
         public override void Setup(string str)
         {
-            if (!int.TryParse(str, out maxDepth))
-                maxDepth = DEFAULT_MAXIMUM_DEPTH;
+            if (Rows <= 8 && Cols <= 7)
+            {
+                if (!int.TryParse(str, out maxDepth))
+                    maxDepth =  DEFAULT_MAXIMUM_DEPTH_HIGH;
 
-            if (maxDepth < 1)
-                maxDepth = DEFAULT_MAXIMUM_DEPTH;
+                if (maxDepth < 1)
+                    maxDepth =  DEFAULT_MAXIMUM_DEPTH_HIGH;
+            }
+            else
+            {
+                if (!int.TryParse(str, out maxDepth))
+                    maxDepth = DEFAULT_MAXIMUM_DEPTH_LOW;
 
-            //losingMoves = new List<FutureMove>();
+                if (maxDepth < 1)
+                    maxDepth = DEFAULT_MAXIMUM_DEPTH_LOW;
+            }
+            
         }
 
 
