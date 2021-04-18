@@ -42,12 +42,12 @@ namespace TrouxaBot
                 if (maxDepth < 1)
                     maxDepth = DEFAULT_MAXIMUM_DEPTH_LOW;
             }
-            
+
         }
 
 
         /// Returns the name of this AI which will include the maximum search depth
-        public override string ToString() => "G03_" + base.ToString() + "_V3";
+        public override string ToString() => "G03_" + base.ToString() + "_V4";
 
         public override FutureMove Think(Board board, CancellationToken ct)
         {
@@ -139,6 +139,14 @@ namespace TrouxaBot
             return selectedMove;
         }
 
+        
+        /// <summary>
+        /// This heuristic values the pieces that are placed in the middle of the board
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="turn"></param>
+        /// <param name="color"></param>
+        /// <returns></returns>
         private  float AndresHeuristic(Board board, PShape turn, PColor color)
         {
             
@@ -196,7 +204,7 @@ namespace TrouxaBot
                             // if the piece shape == of our
                             if (enemyPiece.Value.shape == turn)
                             {
-                                // if the p
+                                // Increment the heuristic
                                 score += points -
                                          Distance(centerRow, centerCol, i, j);
                             }
@@ -216,7 +224,7 @@ namespace TrouxaBot
                             // if the piece shape == of our
                             if (enemyPiece.Value.shape == color.Shape())
                             {
-                                // if the p
+                                // Increment the heuristic
                                 score += points -
                                          Distance(centerRow, centerCol, i, j);
                             }
@@ -225,7 +233,7 @@ namespace TrouxaBot
                 }
                     
             }
-
+            // return the final score given board
             return score;
         }
     }
