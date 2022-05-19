@@ -33,3 +33,6 @@ This work was divided in the following way. Hugo Carvalho programmed the AI and 
 - Finally, we return the final heuristic score for the given board.
 
 ![AI_example](AI_example.png)
+
+
+### [color-shape-links-ai-competition](https://github.com/VideojogosLusofona/color-shape-links-ai-competition#tracks-and-prize-money)
